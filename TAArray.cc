@@ -46,7 +46,7 @@
     }
     TextArea* TAArray::remove(const std::string& id) {
       for (int i = 0; i < size; i++) {
-        if (textAreas[i]->getID()== id) {
+        if (textAreas[i]->getId()== id) {
           TextArea* temp = textAreas[i];
           for (int j = i; j < size-1; j++) {
             textAreas[j] = textAreas[j + 1];
@@ -57,20 +57,6 @@
       }
       return nullptr;
     }
-    TextArea* TAArray::remove(const std::string& id) {
-      for (int i = 0; i < size; i++) {
-        if (textAreas[i]->getId() == id) {
-          TextArea* removed = textAreas[i];
-          for (int j = i; j < size - 1; j++) {
-            textAreas[j] = textAreas[j + 1];
-          }
-          size--;
-          return removed;
-        }
-      }
-      return nullptr;
-    }
-
     TextArea* TAArray::remove(int index) {
       if (index < 0 || index >= size) {
         return nullptr;
@@ -106,6 +92,10 @@
       size--;
       return temp;
     }
+
+
+
+
 
 
 
