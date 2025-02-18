@@ -44,7 +44,7 @@
       }
       return textAreas[index];
     }
-    TextArea* TAArray::remove(TextArea* textArea) {
+    TextArea* TAArray::remove(const std::string& id) {
       for (int i = 0; i < size; i++) {
         if (textAreas[i]->getID()== id) {
           TextArea* temp = textAreas[i];
@@ -106,10 +106,6 @@
       size--;
       return temp;
     }
-
-
-
-
 
 
 
