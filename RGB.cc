@@ -19,7 +19,6 @@ RGB::RGB() {
     this->b = 0;
 }
 
-
 int RGB::getR() const{
     return r;
 }
@@ -29,7 +28,7 @@ int RGB::getG() const{
 int RGB::getB() const{
     return b;
 }
-CuColour RGB::getColour() {
+CuColour RGB::getColour(){
     return (static_cast<CuColour>(r) << 16) | (static_cast<CuColour>(g) << 8) | static_cast<CuColour>(b);
 }
 
