@@ -1,94 +1,103 @@
 #include <iostream>
-#include "defs.h"
 #include "TextArea.h"
 using namespace std;
 
-
-TextArea::TextArea(int x, int y, int width, int height, const string& id, const string& label, const RGB& fill, const RGB& border) {
-  dimensions.x = x;
-  dimensions.y = y;
-  dimensions.width = width;
-  dimensions.height = height;
+TextArea::TextArea(int x, int y, int width, int height, string id, string text, RGB fill, RGB border) {
+  this->rect.x = x;
+  this->rect.y = y;
+  this->rect.width = width;
+  this->rect.height = height;
   this->id = id;
-  this->text = label;
+  this->text = text;
   this->fill = fill;
   this->border = border;
 }
-TextArea::TextArea(const Rectangle& dimensions, const string& id, const string& label, const RGB& fill, const RGB& border) {
-  this->dimensions = dimensions;
+TextArea::TextArea(const Rectangle& rect, string id, string text, RGB fill, RGB border) {
+  this->rect = rect;
   this->id = id;
-  this->text = label;
+  this->text = text;
   this->fill = fill;
   this->border = border;
 }
-TextArea::TextArea() {
-  dimensions.x = 10;
-  dimensions.y = 5;
-  dimensions.width = 10;
-  dimensions.height = 5;
-  this->id = "DEFAULT";
-  this->text = "Hello";
-  this->fill = RGB::WHITE();
-  this->border = RGB::BLACK();
-}
-TextArea::TextArea(const TextArea& other) {
-  dimensions = other.dimensions;
-  id = other.id;
-  text = "DUPLICATE";
-  fill = other.fill;
-  border = other.border;
+TextArea::TextArea(const TextArea& textArea) {
+  this->id = textArea.id;
+  this->rect = textArea.rect;
+  this->text = textArea.text;
+  this->border = textArea.border;
+  this->fill = textArea.fill;
 
 }
+TextArea::~TextArea() {}
 
-int TextArea::getX() {
-  return this->dimensions.x;
-}
-int TextArea::getY() {
-  return this->dimensions.y;
-}
 int TextArea::getWidth() {
-  return this->dimensions.width;
+  return rect.width;
 }
 int TextArea::getHeight() {
-  return this->dimensions.height;
+  return rect.height;
 }
-string TextArea::getText() {
-  return this->text;
+string TextArea::getId() const {
+  return id;
 }
-string TextArea::getId() {
-  return this->id;
-}
-
-void TextArea::setX(int x) {
-  this->dimensions.x = x;
-}
-void TextArea::setY(int y) {
-  this->dimensions.y = y;
+string TextArea::getText() const {
+  return text;
 }
 void TextArea::setWidth(int width) {
-  this->dimensions.width = width;
+  this->rect.width = width;
 }
 void TextArea::setHeight(int height) {
-  this->dimensions.height = height;
+  this->rect.height = height;
 }
 void TextArea::setText(const string& text) {
   this->text = text;
 }
-void TextArea::setFill(const RGB& fill) {
-  this->fill = fill;
-}
-void TextArea::setBorder(const RGB& border) {
-  this->border = border;
-}
-void TextArea::draw(Display *display, Window win, GC gc, int x, int y) {
+
+void TextArea::draw(Display *display, Window win, GC gc, int xgap, int ygap) {
+
+    int xPadding = 6;
+    int yPadding = 4;
+    int charXSpace = 6;
+    int charYSpace = 16;
+    int currentY = charYSpace + ygap - yPadding;
+    int allXSpace = rect.width - 2 * (1 + xPadding);
+    int lettersPerLine = allXSpace/charXSpace;
+
+    XSetForeground(display, gc, fill.getColour());
+    XFillRectangle(display, win, gc, xgap, ygap, rect.width, rect.height);
+    XSetForeground(display, gc, border.getColour());
+    XDrawRectangle(display, win, gc, xgap, ygap, rect.width, rect.height);
+    XSetForeground(display, gc, 0);
+
+    size_t firstPos = 0;
+    while (currentY <= ygap + rect.height && firstPos < text.size()) {
+      size_t lastPos = firstPos + lettersPerLine;
+      if (lastPos < text.size()) {
+        size_t spaceIndex = text.rfind(' ', lastPos);
+        if (spaceIndex != string::npos && spaceIndex >= firstPos) {
+          lastPos = spaceIndex;
+        }
+      } else {
+        lastPos = text.size();
+      }
+      string currentLine = text.substr(firstPos, lastPos-firstPos);
+      XDrawString(display, win, gc, xgap + xPadding, currentY, currentLine.c_str(), currentLine.size());
+      currentY += charYSpace;
+      firstPos = lastPos;
+      while (firstPos < text.size() && text[firstPos] == ' ') {
+        firstPos++;
+      }
+    }
 }
 
-bool TextArea::overlaps(const TextArea& ta) const{
-  return dimensions.overlaps(ta.dimensions);
+bool TextArea::overlaps(TextArea& b) {
+  return rect.overlaps(b.rect);
 }
-void TextArea::print() const{
-  cout << "TextArea id: "<< id <<endl;
-  cout << "Preferred location: " <<dimensions.x<<", "<<dimensions.y<<endl;
-  cout << "Size: "<<dimensions.width<<", "<<dimensions.height<<endl;
-  cout << "TextArea text: "<<text<<endl;
+
+void TextArea::print() const {
+  cout << "TextArea id: " << id << endl;
+  cout << "Preferred location: " << rect.x << ", " << rect.y << endl;
+  cout << "Size: " << rect.width << ", " << rect.height << endl;
+  cout << "Text: " << text << endl;
 }
+
+
+
