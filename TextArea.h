@@ -4,47 +4,39 @@
 #include <iostream>
 #include <string>
 #include <X11/Xlib.h>
-#include <iomanip>
-#include "defs.h"
 #include "RGB.h"
-
+#include "defs.h"
 using namespace std;
 
 class TextArea {
 private:
-    Rectangle dimensions;
-    string text;
-    string id;
+    Rectangle rect;
+    string text, id;
     RGB fill, border;
 
 public:
     // constructors
-    TextArea(int x, int y, int width, int height, const string& id, const string& label, const RGB& fill = RGB::WHITE(), const RGB& border= RGB::BLACK());
-    TextArea(const Rectangle& dimensions, const string& id, const string& label, const RGB& fill = RGB::WHITE(), const RGB& border= RGB::BLACK());
-    TextArea();
-    TextArea(const TextArea& other);
+    TextArea(int x, int y, int width, int height, string id, string label, RGB fill = RGB::WHITE(), RGB border = RGB::BLACK());
+    TextArea(const Rectangle& rect, string id, string label, RGB fill = RGB::WHITE(), RGB border = RGB::BLACK());
+    TextArea(const TextArea& textArea);
 
+    //destructor
+    ~TextArea();
 
     // getters
-    int getX();
-    int getY();
     int getWidth();
     int getHeight();
-    string getText();
-    string getId();
+    string getId() const;
+    string getText() const;
 
     // setters
-    void setX(int x);
-    void setY(int y);
     void setWidth(int width);
     void setHeight(int height);
+    void setId(string id);
     void setText(const string& text);
-    void setFill(const RGB& fill);
-    void setBorder(const RGB& border);
 
     void draw(Display *display, Window win, GC gc, int x, int y);
-    bool overlaps(const TextArea& ta) const;
+    bool overlaps(TextArea& ta);
     void print() const;
 };
 #endif
-
