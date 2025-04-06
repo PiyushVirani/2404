@@ -12,11 +12,14 @@ TAArray::~TAArray() {
   }
   delete[] textAreas;
 }
-bool TAArray::add(TextArea* textArea) {
-  if (size >= MAX_COMPONENTS) {
+bool TAArray::add(TextArea* textArea, int index) {
+  if (size >= MAX_COMPONENTS || index > size || index < 0) {
     return false;
   }
-  textAreas[size] = textArea;
+  for (int i = size; i > index; i--) {
+    textAreas[i] = textAreas[i - 1];
+  }
+  textAreas[index] = textArea;
   size++;
   return true;
 }
