@@ -27,7 +27,7 @@ bool TAArray::add(TextArea* textArea, int index) {
   for (int i = size; i > index; i--) {
     textAreas[i] = textAreas[i - 1];
   }
-  textAreas[size] = textArea;
+  textAreas[index] = textArea;
   size++;
   return true;
 
